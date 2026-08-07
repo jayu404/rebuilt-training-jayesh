@@ -8,22 +8,39 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class SpindexerSubsystem extends SubsystemBase{
 
     TalonFX motor = new TalonFX(SpindexerConst.MOTOR_ID);
+
     
 
     public SpindexerSubsystem(){
         motor.getConfigurator().apply(SpindexerConfig.motorConfiguration);
 
     }
+    /**
+     * sets motor Speed
+     * speed in spindexerConfig
+     * @param speed
+     */
 
     public void moveMotorspeed(double speed){
         motor.set(speed);
     }
+    /**
+     * starts Motor movement
+     */
     public void start(){
         motor.set(SpindexerConfig.motor_speed);
     }
+    /**
+     * stop motor
+     * set to brake
+     */
     public void stop(){
         motor.set(0);
     }
+    /**
+     * Gets current motor speed
+     * @return motor speed
+     */
     public double getMotorSpeed(){
         return motor.get();
         
