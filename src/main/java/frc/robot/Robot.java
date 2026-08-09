@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.feeder.FeederSubsystem;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.spindexer.SpindexerSubsystem;
 
@@ -24,6 +25,9 @@ public class Robot extends TimedRobot {
     private final CommandXboxController controller = new CommandXboxController(0);
     
     private IntakeSubsystem intake = new IntakeSubsystem();
+
+    private FeederSubsystem feeder = new FeederSubsystem();
+
     
 
     
@@ -66,16 +70,21 @@ public class Robot extends TimedRobot {
     @Override
     public void simulationPeriodic() {}
     
-    
+    /**
+     * initialized dashboard and adds data to it
+     */
     public void initDashboard(){
         SmartDashboard.putData("Spindexer", spindexer);
         SmartDashboard.putData("Intake", intake);
+        SmartDashboard.putData("Feeder", feeder);
     }
+    /**
+     * initialized bindings
+     */
 
     public void initBindings(){
         controller.leftBumper().whileTrue(new StartEndCommand(()-> spindexer.start(), ()-> spindexer.stop(), spindexer));
         controller.povDown().onTrue(intake.runOnce(intake::deploy));
         controller.povUp().onTrue(intake.runOnce(intake::stow));
-        
     }
 }
