@@ -1,5 +1,6 @@
 package frc.robot.feeder;
 
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -38,6 +39,9 @@ public class FeederSubsystem extends SubsystemBase{
     public void brake(){
         setMotorSpeed(0);
         
+    }
+    public void coast(){
+        motor.setControl(new CoastOut());
     }
     /**
      * reverses feeder
