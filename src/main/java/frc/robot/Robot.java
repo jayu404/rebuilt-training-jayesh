@@ -4,17 +4,23 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
+import frc.robot.drivetrain.CommandSwerveDrivetrain;
+import frc.robot.drivetrain.TunerConstants;
 import frc.robot.feeder.FeederSubsystem;
 import frc.robot.hood.HoodSubsystem;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.spindexer.SpindexerSubsystem;
+import frc.robot.targeting.Targeting;
 import frc.robot.turret.TurretSubsystem;
 
 public class Robot extends TimedRobot {
@@ -37,11 +43,20 @@ public class Robot extends TimedRobot {
 
     private TurretSubsystem turret = new TurretSubsystem();
 
+    private CommandSwerveDrivetrain drivetrain =
+            new CommandSwerveDrivetrain(
+                    TunerConstants.DrivetrainConstants,
+                    TunerConstants.FrontLeft,
+                    TunerConstants.FrontRight,
+                    TunerConstants.BackLeft,
+                    TunerConstants.BackRight);
+
     @Override
     public void robotInit() {}
 
     @Override
     public void robotPeriodic() {
+        CommandScheduler.getInstance().schedule(returnAiming());
         CommandScheduler.getInstance().run();
     }
 
@@ -74,6 +89,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void simulationPeriodic() {}
+
+    public Command returnAiming() {
+        return Commands.parallel(
+                Commands.runOnce(
+                        () -> Targeting.turretAngle(new Pose3d(drivetrain.getState().Pose))),
+                (Commands.runOnce(
+                        () -> Targeting.launchSpeed(new Pose3d(drivetrain.getState().Pose)))));
+    }
 
     /** initialized dashboard and adds data to it */
     public void initDashboard() {
